@@ -8,7 +8,6 @@ if __name__ == "__main__":
     # 打开数据库连接
     try:
         db = pymysql.connect(host='localhost', user='root', passwd='159951', port=3306, autocommit=False)
-        #print('连接成功！')
     except:
         print('something wrong!')
 

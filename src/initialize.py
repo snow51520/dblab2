@@ -262,13 +262,16 @@ def init(db, cursor):
         
         ALTER TABLE Scores
         ADD CONSTRAINT Scores_cforeign FOREIGN KEY (ClassID) REFERENCES Classes (ClassID);
-
     END
     """)
         db.commit()
     except Exception as e:
         print(f"ERROR:{e}")
         db.rollback()
+        cursor.execute("""
+        ALTER TABLE Scores
+        ADD CONSTRAINT Scores_cforeign FOREIGN KEY (ClassID) REFERENCES Classes (ClassID);
+        """)
         return
 # 存储函数:查询已获得的学生总学分
 
@@ -383,8 +386,7 @@ def init(db, cursor):
         
         IF @count > 0 THEN
             DELETE FROM Punishtime WHERE PunishName = OLD.PunishName;
-        END IF;
-              
+        END IF;  
     END
     """)
         db.commit()

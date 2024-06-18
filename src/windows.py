@@ -4,7 +4,7 @@ import initialize
 import oper
 from PyQt6.QtWidgets import QPushButton, QMessageBox, QApplication, QVBoxLayout, QTableWidget, QTableWidgetItem, QWidget, QHBoxLayout, QLineEdit, QDialog, QLabel, QFileDialog
 from PyQt6.QtCore import QByteArray
-from PyQt6.QtGui import QIcon, QPixmap, QImage
+from PyQt6.QtGui import QIcon, QPixmap, QImage, QColor 
 
 class Check_StudentWindow(QDialog):
     def __init__(self, db, cursor):
@@ -117,21 +117,21 @@ class ResultWindow(QWidget):
                     item = QTableWidgetItem(str(scoreinfo[i][j+1]))
                     self.table1.setItem(i, j, item)
         # 创建表格
-        self.table2 = QTableWidget(len(prizeinfo), 2)
-        self.table2.setHorizontalHeaderLabels(['奖项','等级'])
+        self.table2 = QTableWidget(len(punishinfo), 3)
+        self.table2.setHorizontalHeaderLabels(['学号','奖项','时间'])
         # 填充表格数据
-        for i in range(len(prizeinfo)):
-            for j in range(2):
-                    item = QTableWidgetItem(str(prizeinfo[i][j]))
+        for i in range(len(punishinfo)):
+            for j in range(3):
+                    item = QTableWidgetItem(str(punishinfo[i][j]))
                     self.table2.setItem(i, j, item)
 
         # 创建表格
-        self.table3 = QTableWidget(len(punishinfo), 1)
-        self.table3.setHorizontalHeaderLabels(['惩罚'])
+        self.table3 = QTableWidget(len(prizeinfo), 3)
+        self.table3.setHorizontalHeaderLabels(['学号','惩罚','时间'])
         # 填充表格数据
-        for i in range(len(punishinfo)):
-            for j in range(1):
-                    item = QTableWidgetItem(str(punishinfo[i][j]))
+        for i in range(len(prizeinfo)):
+            for j in range(3):
+                    item = QTableWidgetItem(str(prizeinfo[i][j]))
                     self.table3.setItem(i, j, item)
 
         # 创建关闭按钮
@@ -463,11 +463,12 @@ class New_PunishWindow(QDialog):
         if (len(self.input_box1.text()) != 0):
             acceptflag += 1
             self.name = self.input_box1.text()
-            info = oper.select_class_ID(self.db, self.cursor, self.name)
+            info = oper.select_punish_name(self.db, self.cursor, self.name)
             if (info != None):
                 widget = QWidget()
                 QMessageBox.information(widget, '信息', '该惩罚已存在') #触发的事件时弹出会话框
                 return
+
             
         if acceptflag == 1:
             self.accept()
@@ -605,6 +606,7 @@ class New_StudentWindow(QDialog):
 class Change_StudentWindow(QDialog):
     def __init__(self, db, cursor, oldinfo):
         super().__init__()
+        self.db = db
         self.ID = oldinfo[0]
         self.name = oldinfo[1]
         self.age = oldinfo[2]
@@ -1009,6 +1011,8 @@ class Main_Window(QWidget):
         self.btn19 = QPushButton('新增成绩', self)
         self.btn20 = QPushButton('删除成绩', self)
         self.btn21 = QPushButton('重置数据库', self)
+        self.btn21.setStyleSheet("QPushButton { color: red; }")
+        self.btn21.setStyleSheet(self.btn21.styleSheet() + "QPushButton { background-color: black; }")
         self.init_ui()
 
     def init_ui(self):
@@ -1158,7 +1162,7 @@ class Main_Window(QWidget):
         self.newWindow = New_PunishWindow(self.db, self.cursor)
         if self.newWindow.exec():
             newName = self.newWindow.get_entered_Name()
-            punishments.add_punishment(self.db, self.cursor, newName)
+            oper.add_punishment(self.db, self.cursor, newName)
             widget = QWidget()
             QMessageBox.information(widget, '信息', '添加成功') #触发的事件时弹出会话框
 
@@ -1284,7 +1288,7 @@ class Main_Window(QWidget):
             newID = self.newWindow.get_entered_ID()
             newName = self.newWindow.get_entered_Name()
             newTime = self.newWindow.get_entered_timescore()
-            oper.add_punishtime(self.db, self.cursor, newID, newName, newTime)
+            oper.add_prizetime(self.db, self.cursor, newID, newName, newTime)
             widget = QWidget()
             QMessageBox.information(widget, '信息', '添加成功') #触发的事件时弹出会话框
 
