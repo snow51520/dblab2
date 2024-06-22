@@ -42,56 +42,6 @@ def changeid_class(db, cursor, oldID, newID):
         db.rollback()
         return
 
-# 添加奖项
-def add_prize(db, cursor, name, grade):
-    try:
-        cursor.execute("INSERT INTO Prizes (PrizeName, Grade) VALUES (%s, %s)", (name, grade)) 
-        db.commit()
-    except Exception as e:
-        print(f"ERROR:{e}")
-        db.rollback()
-        return
-    
-
-# 删除奖项
-def delete_prize(db, cursor, name):
-    try:
-        cursor.execute("DELETE FROM Prizes WHERE PrizeName = %s", (name, )) 
-        db.commit()
-    except Exception as e:
-        print(f"ERROR:{e}")
-        db.rollback()
-        return
-    
-# 创建获奖时间
-def add_prizetime(db, cursor, sID, name, date):
-    try:
-        cursor.execute("INSERT INTO Prizetime (StudentID, PrizeName, Date) VALUES (%s, %s, %s)", (sID, name, date)) 
-        db.commit()
-    except Exception as e:
-        print(f"ERROR:{e}")
-        db.rollback()
-        return
-    
-# 修改获奖时间
-def change_prizetime(db, cursor, sID, name, newinf):
-    try:
-        cursor.execute("UPDATE Prizetime SET Date = %s WHERE StudentID = %s AND PrizeName = %s", (newinf, sID, name)) 
-        db.commit()
-    except Exception as e:
-        print(f"ERROR:{e}")
-        db.rollback()
-        return    
-
-# 删除获奖时间
-def delete_prizetime(db, cursor, sID, name):
-    try:
-        cursor.execute("DELETE FROM Prizetime WHERE StudentID = %s AND PrizeName = %s", (sID, name)) 
-        db.commit()
-    except Exception as e:
-        print(f"ERROR:{e}")
-        db.rollback()
-        return
 
 # 添加惩罚
 def add_punishment(db, cursor, name):
@@ -138,6 +88,56 @@ def change_punishtime(db, cursor, sID, name, newinf):
 def delete_punishtime(db, cursor, sID, name):
     try:
         cursor.execute("DELETE FROM Punishtime WHERE StudentID = %s AND PunishName = %s", (sID, name)) 
+        db.commit()
+    except Exception as e:
+        print(f"ERROR:{e}")
+        db.rollback()
+        return
+# 添加奖项
+def add_prize(db, cursor, name, grade):
+    try:
+        cursor.execute("INSERT INTO Prizes (PrizeName, Grade) VALUES (%s, %s)", (name, grade)) 
+        db.commit()
+    except Exception as e:
+        print(f"ERROR:{e}")
+        db.rollback()
+        return
+    
+
+# 删除奖项
+def delete_prize(db, cursor, name):
+    try:
+        cursor.execute("DELETE FROM Prizes WHERE PrizeName = %s", (name, )) 
+        db.commit()
+    except Exception as e:
+        print(f"ERROR:{e}")
+        db.rollback()
+        return
+    
+# 创建获奖时间
+def add_prizetime(db, cursor, sID, name, date):
+    try:
+        cursor.execute("INSERT INTO Prizetime (StudentID, PrizeName, Date) VALUES (%s, %s, %s)", (sID, name, date)) 
+        db.commit()
+    except Exception as e:
+        print(f"ERROR:{e}")
+        db.rollback()
+        return
+    
+# 修改获奖时间
+def change_prizetime(db, cursor, sID, name, newinf):
+    try:
+        cursor.execute("UPDATE Prizetime SET Date = %s WHERE StudentID = %s AND PrizeName = %s", (newinf, sID, name)) 
+        db.commit()
+    except Exception as e:
+        print(f"ERROR:{e}")
+        db.rollback()
+        return    
+
+# 删除获奖时间
+def delete_prizetime(db, cursor, sID, name):
+    try:
+        cursor.execute("DELETE FROM Prizetime WHERE StudentID = %s AND PrizeName = %s", (sID, name)) 
         db.commit()
     except Exception as e:
         print(f"ERROR:{e}")

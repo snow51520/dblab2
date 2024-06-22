@@ -233,6 +233,18 @@ def init(db, cursor):
         db.commit()
     except Exception as e:
         print(f"ERROR:{e}")
+        cursor.execute("""
+        ALTER TABLE Scores
+        ADD CONSTRAINT Scores_sforeign FOREIGN KEY (StudentID) REFERENCES Students (StudentID);
+        """)
+        cursor.execute("""
+        ALTER TABLE Punishtime
+        ADD CONSTRAINT Punishtime_sforeign FOREIGN KEY (StudentID) REFERENCES Students (StudentID);
+        """)
+        cursor.execute("""
+        ALTER TABLE Prizetime
+        ADD CONSTRAINT Prizetime_sforeign FOREIGN KEY (StudentID) REFERENCES Students (StudentID);
+        """)
         db.rollback()
         return
 # 存储过程:修改课程号

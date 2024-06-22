@@ -1,8 +1,11 @@
 import sys
 import pymysql
-from PyQt6.QtWidgets import QPushButton, QMessageBox, QApplication, QWidget
-import windows
+from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QLabel, QLineEdit, QPushButton, QMessageBox
+import windo
 #mysql -u root -p
+
+
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     # 打开数据库连接
@@ -19,7 +22,14 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"ERROR:{e}")
 
-
-    windows = windows.Main_Window(db, cursor)
+    login_window = windo.LoginWindow(db, cursor)
+    login_window.show()
+    windows = windo.Main_Window(db, cursor)
     windows.show()
+    
     sys.exit(app.exec())
+    cursor.close()
+    db.close()
+
+
+

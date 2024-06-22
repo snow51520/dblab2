@@ -2,9 +2,53 @@ import sys
 import io
 import initialize
 import oper
-from PyQt6.QtWidgets import QPushButton, QMessageBox, QApplication, QVBoxLayout, QTableWidget, QTableWidgetItem, QWidget, QHBoxLayout, QLineEdit, QDialog, QLabel, QFileDialog
+import time
+from PyQt6.QtWidgets import QPushButton, QMessageBox, QApplication, QVBoxLayout, QTableWidget, QTableWidgetItem, QWidget, QHBoxLayout, QLineEdit, QDialog, QLabel, QFileDialog,QMainWindow
 from PyQt6.QtCore import QByteArray
 from PyQt6.QtGui import QIcon, QPixmap, QImage, QColor 
+
+class LoginWindow(QWidget):
+    def __init__(self, db, cursor):
+        super().__init__()
+        self.db = db
+        self.cursor = cursor
+        self.flag=0
+        self.setWindowTitle("登录")
+        self.setGeometry(100, 100, 300, 150)
+
+        self.username_label = QLabel("用户名:", self)
+        self.username_label.move(20, 20)
+        self.username_input = QLineEdit(self)
+        self.username_input.move(100, 20)
+
+        self.password_label = QLabel("密码:", self)
+        self.password_label.move(20, 50)
+        self.password_input = QLineEdit(self)
+        self.password_input.setEchoMode(QLineEdit.EchoMode.Password)
+        self.password_input.move(100, 50)
+
+        self.login_button = QPushButton("登录", self)
+        self.login_button.move(100, 80)
+        self.login_button.clicked.connect(self.check_credentials)
+
+    def check_credentials(self):
+        # 预设的用户名和密码
+        preset_username = "admin"
+        preset_password = "password"
+
+        entered_username = self.username_input.text()
+        entered_password = self.password_input.text()
+
+        if entered_username == preset_username and entered_password == preset_password:
+            # 验证成功，打开主窗口
+            self.flag=1
+            self.close()
+
+        else:
+            # 验证失败，弹出错误消息
+            QMessageBox.critical(self, "错误", "用户名或密码错误！", QMessageBox.StandardButton.Ok)
+    def check_flag(self):
+        return self.flag
 
 class Check_StudentWindow(QDialog):
     def __init__(self, db, cursor):
@@ -13,7 +57,7 @@ class Check_StudentWindow(QDialog):
         self.cursor = cursor
         self.ID, self.name, self.age, self.major, self.photo = '', '', 1, '', ''
         self.setWindowTitle('输入需要查询的学生学号')
-        self.resize(320, 200)
+        self.resize(200, 80)
         self.init_ui()
 
     def init_ui(self):
@@ -21,20 +65,11 @@ class Check_StudentWindow(QDialog):
         # 创建 QLineEdit 对象
         self.input_box1 = QLineEdit(self)
         self.input_box1.setPlaceholderText("在此输入学号...")
-
+        self.input_box1.move(10, 10)
         # 创建确认按钮
         self.closeButton = QPushButton('确认', self)
         self.closeButton.clicked.connect(self.get_text)
-
-        # 设置布局
-        layout = QVBoxLayout()
-        layout1 = QHBoxLayout()
-        layout1.addWidget(self.input_box1)
-        bottomLayout = QHBoxLayout()
-        bottomLayout.addWidget(self.closeButton)
-        layout.addLayout(layout1)
-        layout.addLayout(bottomLayout)
-        self.setLayout(layout)
+        self.closeButton.move(10, 50)
 
     def get_text(self):
         self.acceptflag = False
@@ -172,7 +207,7 @@ class delete_scoreWindow(QDialog):
         self.sID = ''
         self.cID = ''
         self.setWindowTitle('输入要删除的学生学号和课程号')
-        self.resize(320, 200)
+        self.resize(200, 150)
         self.init_ui()
     
     def init_ui(self):
@@ -186,24 +221,16 @@ class delete_scoreWindow(QDialog):
         self.input_box2 = QLineEdit(self)
         self.input_box2.setPlaceholderText("在此输入课程号...")
 
+        self.label1.move(10, 10)
+        self.input_box1.move(10, 10)
+        self.label2.move(10, 50)
+        self.input_box2.move(10, 50)
+
         # 创建确认按钮
         self.closeButton = QPushButton('确认', self)
+        self.closeButton.move(50, 90)
         self.closeButton.clicked.connect(self.get_text)
 
-        # 设置布局
-        layout = QVBoxLayout()
-        layout1 = QHBoxLayout()
-        layout1.addWidget(self.label1)
-        layout1.addWidget(self.input_box1)
-        layout2 = QHBoxLayout()
-        layout2.addWidget(self.label2)
-        layout2.addWidget(self.input_box2)
-        bottomLayout = QHBoxLayout()
-        bottomLayout.addWidget(self.closeButton)
-        layout.addLayout(layout1)
-        layout.addLayout(layout2)
-        layout.addLayout(bottomLayout)
-        self.setLayout(layout)
 
     def get_text(self):
         acceptflag = 0
@@ -227,7 +254,7 @@ class delete_scoreWindow(QDialog):
     def get_entered_cID(self):
         return self.cID
     
-class add_timescoreWindow(QDialog):
+class add_for_student(QDialog):
     def __init__(self, db, cursor, kind):
         super().__init__()
         self.db = db
@@ -365,7 +392,7 @@ class New_PrizeWindow(QDialog):
         self.grade = ''
         self.name = ''
         self.setWindowTitle('输入新奖项信息')
-        self.resize(320, 200)
+        self.resize(200, 150)
         self.init_ui()
     
     def init_ui(self):
@@ -378,26 +405,15 @@ class New_PrizeWindow(QDialog):
         self.input_box1.setPlaceholderText("在此输入新的奖项...")
         self.input_box2 = QLineEdit(self)
         self.input_box2.setPlaceholderText("在此输入新的等级...")
-
+         # 设置布局
+        self.label1.move(10, 10)
+        self.input_box1.move(10, 10)
+        self.label2.move(10, 50)
+        self.input_box2.move(10, 50)
         # 创建确认按钮
         self.closeButton = QPushButton('确认', self)
+        self.closeButton.move(50, 90)
         self.closeButton.clicked.connect(self.get_text)
-
-        # 设置布局
-        layout = QVBoxLayout()
-        layout1 = QHBoxLayout()
-        layout1.addWidget(self.label1)
-        layout1.addWidget(self.input_box1)
-        layout2 = QHBoxLayout()
-        layout2.addWidget(self.label2)
-        layout2.addWidget(self.input_box2)
-        bottomLayout = QHBoxLayout()
-        bottomLayout.addWidget(self.closeButton)
-        layout.addLayout(layout1)
-        layout.addLayout(layout2)
-        layout.addLayout(bottomLayout)
-        self.setLayout(layout)
-
     def get_text(self):
         acceptflag = 0
         if (len(self.input_box1.text()) != 0):
@@ -425,14 +441,14 @@ class New_PrizeWindow(QDialog):
     def get_entered_Grade(self):
         return self.grade
     
-class New_PunishWindow(QDialog):
+class New_PunishmentWindow(QDialog):
     def __init__(self, db, cursor):
         super().__init__()
         self.db = db
         self.cursor = cursor
         self.name = ''
         self.setWindowTitle('输入新课惩罚信息')
-        self.resize(320, 200)
+        self.resize(200, 100)
         self.init_ui()
     
     def init_ui(self):
@@ -442,21 +458,13 @@ class New_PunishWindow(QDialog):
         # 创建 QLineEdit 对象
         self.input_box1 = QLineEdit(self)
         self.input_box1.setPlaceholderText("在此输入新的惩罚...")
-
+        self.label1.move(10, 10)
+        self.input_box1.move(10, 10)
         # 创建确认按钮
         self.closeButton = QPushButton('确认', self)
+        self.closeButton.move(50, 50)
         self.closeButton.clicked.connect(self.get_text)
 
-        # 设置布局
-        layout = QVBoxLayout()
-        layout1 = QHBoxLayout()
-        layout1.addWidget(self.label1)
-        layout1.addWidget(self.input_box1)
-        bottomLayout = QHBoxLayout()
-        bottomLayout.addWidget(self.closeButton)
-        layout.addLayout(layout1)
-        layout.addLayout(bottomLayout)
-        self.setLayout(layout)
 
     def get_text(self):
         acceptflag = 0
@@ -614,7 +622,7 @@ class Change_StudentWindow(QDialog):
         self.photo = oldinfo[4]
         self.acceptflag = False
         self.setWindowTitle(f'请输入要修改的内容，不需要修改则留空')
-        self.resize(320, 200)
+        self.resize(200, 300)
         self.init_ui()
     
     def init_ui(self):
@@ -633,40 +641,22 @@ class Change_StudentWindow(QDialog):
         self.input_box3.setPlaceholderText("在此输入新的年龄...")
         self.input_box4 = QLineEdit(self)
         self.input_box4.setPlaceholderText("在此输入新的专业...")
-
+        self.label1.move(10, 10)
+        self.input_box1.move(10, 10)
+        self.label2.move(10, 50)
+        self.input_box2.move(10, 50)
+        self.label3.move(10, 100)
+        self.input_box3.move(10, 100)
+        self.label4.move(10, 150)
+        self.input_box4.move(10, 150)
         # 创建上传照片按钮
         self.chooseButton = QPushButton('选择要上传的照片', self)
         self.chooseButton.clicked.connect(self.choosePhoto)
-
+        self.chooseButton.move(50, 200)
         # 创建确认按钮
         self.closeButton = QPushButton('确认', self)
         self.closeButton.clicked.connect(self.get_text)
-
-        # 设置布局
-        layout = QVBoxLayout()
-        layout1 = QHBoxLayout()
-        layout1.addWidget(self.label1)
-        layout1.addWidget(self.input_box1)
-        layout2 = QHBoxLayout()
-        layout2.addWidget(self.label2)
-        layout2.addWidget(self.input_box2)
-        layout3 = QHBoxLayout()
-        layout3.addWidget(self.label3)
-        layout3.addWidget(self.input_box3)
-        layout4 = QHBoxLayout()
-        layout4.addWidget(self.label4)
-        layout4.addWidget(self.input_box4)
-        layout5 = QHBoxLayout()
-        layout5.addWidget(self.chooseButton)
-        bottomLayout = QHBoxLayout()
-        bottomLayout.addWidget(self.closeButton)
-        layout.addLayout(layout1)
-        layout.addLayout(layout2)
-        layout.addLayout(layout3)
-        layout.addLayout(layout4)
-        layout.addLayout(layout5)
-        layout.addLayout(bottomLayout)
-        self.setLayout(layout)
+        self.closeButton.move(50, 250)
 
     def get_text(self):
         
@@ -726,7 +716,7 @@ class New_ClassWindow(QDialog):
         self.name = ''
         self.point = 0
         self.setWindowTitle('输入新课程信息')
-        self.resize(320, 200)
+        self.resize(200, 200)
         self.init_ui()
     
     def init_ui(self):
@@ -742,29 +732,17 @@ class New_ClassWindow(QDialog):
         self.input_box2.setPlaceholderText("在此输入新的课程名...")
         self.input_box3 = QLineEdit(self)
         self.input_box3.setPlaceholderText("在此输入新的学分...")
+        self.label1.move(10, 10)
+        self.input_box1.move(10, 10)
+        self.label2.move(10, 50)
+        self.input_box2.move(10, 50)
+        self.label3.move(10, 100)
+        self.input_box3.move(10, 100)
 
         # 创建确认按钮
         self.closeButton = QPushButton('确认', self)
         self.closeButton.clicked.connect(self.get_text)
-
-        # 设置布局
-        layout = QVBoxLayout()
-        layout1 = QHBoxLayout()
-        layout1.addWidget(self.label1)
-        layout1.addWidget(self.input_box1)
-        layout2 = QHBoxLayout()
-        layout2.addWidget(self.label2)
-        layout2.addWidget(self.input_box2)
-        layout3 = QHBoxLayout()
-        layout3.addWidget(self.label3)
-        layout3.addWidget(self.input_box3)
-        bottomLayout = QHBoxLayout()
-        bottomLayout.addWidget(self.closeButton)
-        layout.addLayout(layout1)
-        layout.addLayout(layout2)
-        layout.addLayout(layout3)
-        layout.addLayout(bottomLayout)
-        self.setLayout(layout)
+        self.closeButton.move(10, 150)
 
     def get_text(self):
         acceptflag = 0
@@ -814,7 +792,7 @@ class Change_ClassWindow(QDialog):
         self.name = oldinfo[1]
         self.point = oldinfo[2]
         self.setWindowTitle(f'请输入要修改的内容，不需要修改则留空')
-        self.resize(320, 200)
+        self.resize(200, 200)
         self.init_ui()
     
     def init_ui(self):
@@ -830,29 +808,17 @@ class Change_ClassWindow(QDialog):
         self.input_box2.setPlaceholderText("在此输入新的课程名...")
         self.input_box3 = QLineEdit(self)
         self.input_box3.setPlaceholderText("在此输入新的学分...")
+        self.label1.move(10, 10)
+        self.input_box1.move(10, 10)
+        self.label2.move(10, 50)
+        self.input_box2.move(10, 50)
+        self.label3.move(10, 100)
+        self.input_box3.move(10, 100)
 
         # 创建确认按钮
         self.closeButton = QPushButton('确认', self)
         self.closeButton.clicked.connect(self.get_text)
-
-        # 设置布局
-        layout = QVBoxLayout()
-        layout1 = QHBoxLayout()
-        layout1.addWidget(self.label1)
-        layout1.addWidget(self.input_box1)
-        layout2 = QHBoxLayout()
-        layout2.addWidget(self.label2)
-        layout2.addWidget(self.input_box2)
-        layout3 = QHBoxLayout()
-        layout3.addWidget(self.label3)
-        layout3.addWidget(self.input_box3)
-        bottomLayout = QHBoxLayout()
-        bottomLayout.addWidget(self.closeButton)
-        layout.addLayout(layout1)
-        layout.addLayout(layout2)
-        layout.addLayout(layout3)
-        layout.addLayout(bottomLayout)
-        self.setLayout(layout)
+        self.closeButton.move(10, 150)
 
     def get_text(self):
         acceptflag = False
@@ -888,7 +854,7 @@ class Entertext(QDialog):
         super().__init__()
         self.text = ''
         self.setWindowTitle(f'请输入要{action}的{content}')
-        self.resize(320, 200)
+        self.resize(300, 100)
         self.init_ui()
     
     def init_ui(self):
@@ -899,14 +865,8 @@ class Entertext(QDialog):
         # 创建确认按钮
         self.closeButton = QPushButton('确认', self)
         self.closeButton.clicked.connect(self.get_text)
-
-        # 设置布局
-        layout = QVBoxLayout()
-        layout.addWidget(self.input_box)
-        bottomLayout = QHBoxLayout()
-        bottomLayout.addWidget(self.closeButton)
-        layout.addLayout(bottomLayout)
-        self.setLayout(layout)
+        self.input_box.move(10, 10)
+        self.closeButton.move(10, 50)
 
     def get_text(self):
         self.text = self.input_box.text()
@@ -996,12 +956,12 @@ class Main_Window(QWidget):
         self.btn4 = QPushButton('学号查询具体信息', self)
         self.btn5 = QPushButton('新增学生', self)
         self.btn6 = QPushButton('新增课程', self)
-        self.btn7 = QPushButton('新增奖项', self)
-        self.btn8 = QPushButton('新增惩罚', self)
-        self.btn9 = QPushButton('修改课程信息', self)
-        self.btn10 = QPushButton('修改学生信息', self)
-        self.btn11 = QPushButton('删除学生', self)
-        self.btn12 = QPushButton('删除课程', self)
+        self.btn7 = QPushButton('修改课程信息', self)
+        self.btn8 = QPushButton('修改学生信息', self)
+        self.btn9 = QPushButton('删除学生', self)
+        self.btn10 = QPushButton('删除课程', self)
+        self.btn11 = QPushButton('新增奖项', self)
+        self.btn12 = QPushButton('新增惩罚', self)
         self.btn13 = QPushButton('删除奖项', self)
         self.btn14 = QPushButton('删除惩罚', self)
         self.btn15 = QPushButton('查看全部奖项', self)
@@ -1017,88 +977,88 @@ class Main_Window(QWidget):
 
     def init_ui(self):
         self.btn1.resize(110,55)
-        self.btn1.move(50, 50)   #按钮的位置
-        self.btn1.clicked.connect(self.check_all_students) #使用connect绑定事件，点击按钮时触发
+        self.btn1.move(50, 50)   
+        self.btn1.clicked.connect(self.check_all_students) 
 
         self.btn2.resize(110,55)
-        self.btn2.move(250, 50)   #按钮的位置
-        self.btn2.clicked.connect(self.check_all_classes) #使用connect绑定事件，点击按钮时触发
+        self.btn2.move(250, 50)   
+        self.btn2.clicked.connect(self.check_all_classes) 
 
         self.btn3.resize(110,55)
-        self.btn3.move(450, 50)   #按钮的位置
-        self.btn3.clicked.connect(self.check_student_name) #使用connect绑定事件，点击按钮时触发
+        self.btn3.move(450, 50)   
+        self.btn3.clicked.connect(self.check_student_name) 
 
         self.btn4.resize(110,55)
-        self.btn4.move(50, 150)   #按钮的位置
-        self.btn4.clicked.connect(self.check_student_info) #使用connect绑定事件，点击按钮时触发
+        self.btn4.move(50, 150)   
+        self.btn4.clicked.connect(self.check_student_info) 
 
         self.btn5.resize(110,55)
-        self.btn5.move(250, 150)   #按钮的位置
-        self.btn5.clicked.connect(self.add_student) #使用connect绑定事件，点击按钮时触发
+        self.btn5.move(250, 150)   
+        self.btn5.clicked.connect(self.add_student) 
 
         self.btn6.resize(110,55)
-        self.btn6.move(450, 150)   #按钮的位置
-        self.btn6.clicked.connect(self.add_class) #使用connect绑定事件，点击按钮时触发
+        self.btn6.move(450, 150)   
+        self.btn6.clicked.connect(self.add_class) 
 
         self.btn7.resize(110,55)
-        self.btn7.move(50, 250)   #按钮的位置
-        self.btn7.clicked.connect(self.add_prize) #使用connect绑定事件，点击按钮时触发
+        self.btn7.move(50, 250)   
+        self.btn7.clicked.connect(self.change_class) 
 
         self.btn8.resize(110,55)
-        self.btn8.move(250, 250)   #按钮的位置
-        self.btn8.clicked.connect(self.add_punish) #使用connect绑定事件，点击按钮时触发
+        self.btn8.move(250, 250)   
+        self.btn8.clicked.connect(self.change_student) 
 
         self.btn9.resize(110,55)
-        self.btn9.move(450, 250)   #按钮的位置
-        self.btn9.clicked.connect(self.change_class) #使用connect绑定事件，点击按钮时触发
+        self.btn9.move(450, 250)   
+        self.btn9.clicked.connect(self.delete_student) 
 
         self.btn10.resize(110,55)
-        self.btn10.move(50, 350)   #按钮的位置
-        self.btn10.clicked.connect(self.change_student) #使用connect绑定事件，点击按钮时触发
+        self.btn10.move(50, 350)   
+        self.btn10.clicked.connect(self.delete_class) 
 
         self.btn11.resize(110,55)
-        self.btn11.move(250, 350)   #按钮的位置
-        self.btn11.clicked.connect(self.delete_student) #使用connect绑定事件，点击按钮时触发
+        self.btn11.move(250, 350)   
+        self.btn11.clicked.connect(self.add_prize) 
 
         self.btn12.resize(110,55)
-        self.btn12.move(450, 350)   #按钮的位置
-        self.btn12.clicked.connect(self.delete_class) #使用connect绑定事件，点击按钮时触发
+        self.btn12.move(450, 350)   
+        self.btn12.clicked.connect(self.add_punish) 
 
         self.btn13.resize(110,55)
-        self.btn13.move(50, 450)   #按钮的位置
-        self.btn13.clicked.connect(self.delete_prize) #使用connect绑定事件，点击按钮时触发
+        self.btn13.move(50, 450)   
+        self.btn13.clicked.connect(self.delete_prize) 
 
         self.btn14.resize(110,55)
-        self.btn14.move(250, 450)   #按钮的位置
-        self.btn14.clicked.connect(self.delete_punish) #使用connect绑定事件，点击按钮时触发
+        self.btn14.move(250, 450)   
+        self.btn14.clicked.connect(self.delete_punish) 
 
         self.btn15.resize(110,55)
-        self.btn15.move(450, 450)   #按钮的位置
-        self.btn15.clicked.connect(self.check_all_prizes) #使用connect绑定事件，点击按钮时触发
+        self.btn15.move(450, 450)   
+        self.btn15.clicked.connect(self.check_all_prizes) 
 
         self.btn16.resize(110,55)
-        self.btn16.move(50, 550)   #按钮的位置
-        self.btn16.clicked.connect(self.check_all_punishments) #使用connect绑定事件，点击按钮时触发
+        self.btn16.move(50, 550)   
+        self.btn16.clicked.connect(self.check_all_punishments) 
 
         self.btn17.resize(110,55)
-        self.btn17.move(250, 550)   #按钮的位置
-        self.btn17.clicked.connect(self.add_punish_for_student) #使用connect绑定事件，点击按钮时触发
+        self.btn17.move(250, 550)   
+        self.btn17.clicked.connect(self.add_punish_for_student) 
 
         self.btn18.resize(110,55)
-        self.btn18.move(450, 550)   #按钮的位置
-        self.btn18.clicked.connect(self.add_prize_for_student) #使用connect绑定事件，点击按钮时触发
+        self.btn18.move(450, 550)   
+        self.btn18.clicked.connect(self.add_prize_for_student) 
 
         self.btn19.resize(110,55)
-        self.btn19.move(50, 650)   #按钮的位置
-        self.btn19.clicked.connect(self.add_score) #使用connect绑定事件，点击按钮时触发
+        self.btn19.move(50, 650)   
+        self.btn19.clicked.connect(self.add_score) 
 
         self.btn20.resize(110,55)
-        self.btn20.move(250, 650)   #按钮的位置
-        self.btn20.clicked.connect(self.delete_score) #使用connect绑定事件，点击按钮时触发
+        self.btn20.move(250, 650)   
+        self.btn20.clicked.connect(self.delete_score) 
 
         self.btn21.resize(110,55)
-        self.btn21.move(450, 650)   #按钮的位置
-        self.btn21.clicked.connect(self.reset_db) #使用connect绑定事件，点击按钮时触发
+        self.btn21.move(450, 650)   
+        self.btn21.clicked.connect(self.reset_db) 
 
     def check_all_students(self):
         self.tableWindow = select_allTable(self.db, self.cursor, 0, '')
@@ -1159,7 +1119,7 @@ class Main_Window(QWidget):
             QMessageBox.information(widget, '信息', '添加成功') #触发的事件时弹出会话框
 
     def add_punish(self):
-        self.newWindow = New_PunishWindow(self.db, self.cursor)
+        self.newWindow = New_PunishmentWindow(self.db, self.cursor)
         if self.newWindow.exec():
             newName = self.newWindow.get_entered_Name()
             oper.add_punishment(self.db, self.cursor, newName)
@@ -1273,7 +1233,7 @@ class Main_Window(QWidget):
         self.tableWindow.show()
 
     def add_punish_for_student(self):
-        self.newWindow = add_timescoreWindow(self.db, self.cursor, 1)
+        self.newWindow = add_for_student(self.db, self.cursor, 1)
         if self.newWindow.exec():
             newID = self.newWindow.get_entered_ID()
             newName = self.newWindow.get_entered_Name()
@@ -1283,7 +1243,7 @@ class Main_Window(QWidget):
             QMessageBox.information(widget, '信息', '添加成功') #触发的事件时弹出会话框
 
     def add_prize_for_student(self):
-        self.newWindow = add_timescoreWindow(self.db, self.cursor, 0)
+        self.newWindow = add_for_student(self.db, self.cursor, 0)
         if self.newWindow.exec():
             newID = self.newWindow.get_entered_ID()
             newName = self.newWindow.get_entered_Name()
@@ -1293,7 +1253,7 @@ class Main_Window(QWidget):
             QMessageBox.information(widget, '信息', '添加成功') #触发的事件时弹出会话框
 
     def add_score(self):
-        self.newWindow = add_timescoreWindow(self.db, self.cursor, 2)
+        self.newWindow = add_for_student(self.db, self.cursor, 2)
         if self.newWindow.exec():
             newID = self.newWindow.get_entered_ID()
             newName = self.newWindow.get_entered_Name()
@@ -1320,6 +1280,6 @@ class Main_Window(QWidget):
         initialize.init(self.db, self.cursor)
         widget = QWidget()
         QMessageBox.information(widget, '信息', '成功重置数据库') #触发的事件时弹出会话框
-
+    
 
 
